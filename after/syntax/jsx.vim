@@ -27,17 +27,13 @@ if exists('s:current_syntax')
 endif
 
 " Highlight JSX regions as XML; recursively match.
-syn region jsxRegion contains=@XMLSyntax,jsxRegion,jsBlock,javascriptBlock
-  \ start=+<\@<!<\z([a-zA-Z][a-zA-Z0-9:\-.]*\)+
-  \ skip=+<!--\_.\{-}-->+
-  \ end=+</\z1\_\s\{-}>+
-  \ end=+/>+
-  \ keepend
-  \ extend
+syn match jsxMulti contains=@XMLSyntax,jsxMulti,jsxSingle,jsBlock,javascriptBlock "<\([^ >]\+\) \?[^>]*>\_.*<\/\1[^>]*>"
+
+syn match jsxSingle contains=@XMLSyntax,jsxMulti,jsxSingle,jsBlock,javascriptBlock "<\@<!<\([^ >]\+\)[^/>]*/>"
 
 " JSX attributes should color as JS.  Note the trivial end pattern; we let
 " jsBlock take care of ending the region.
 syn region xmlString contained start=+{+ end=++ contains=jsBlock,javascriptBlock
 
 " Add jsxRegion to the lowest-level JS syntax cluster.
-syn cluster jsExpression add=jsxRegion
+syn cluster jsExpression add=jsxMulti,jsxSingle
